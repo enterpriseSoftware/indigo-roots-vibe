@@ -40,7 +40,7 @@ export default function AuthTestPage() {
               )}
               <div className="space-y-3">
                 <div className="text-sm text-brand-gray">
-                  ✅ NextAuth.js session provider is working correctly!
+                  ✅ NextAuth.js session provider is working correctly yay!
                 </div>
 
                 <div className="flex gap-3">
