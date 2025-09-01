@@ -12,7 +12,7 @@ export default function UnauthorizedPage() {
           <CardContent>
             <div className="space-y-4">
               <p className="text-brand-gray">
-                You don't have permission to access this area.
+                You don&apos;t have permission to access this area.
               </p>
 
               <p className="text-sm text-brand-gray">

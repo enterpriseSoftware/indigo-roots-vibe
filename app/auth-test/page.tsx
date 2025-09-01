@@ -56,7 +56,7 @@ export default function AuthTestPage() {
                 </div>
 
                 <div className="text-sm text-brand-gray">
-                  Note: You'll need a user account in the database to sign in.
+                  Note: You&apos;ll need a user account in the database to sign in.
                 </div>
               </div>
             </div>

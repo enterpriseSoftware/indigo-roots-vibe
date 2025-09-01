@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
+import { signIn } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardTitle, CardContent } from '@/components/ui/card'
@@ -9,14 +9,14 @@ import { Card, CardTitle, CardContent } from '@/components/ui/card'
 export default function SignInPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [authError, setAuthError] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
+    setAuthError('')
 
     try {
       const result = await signIn('credentials', {
@@ -26,13 +26,13 @@ export default function SignInPage() {
       })
 
       if (result?.error) {
-        setError('Invalid email or password')
+        setAuthError('Invalid email or password')
       } else {
         router.push('/')
         router.refresh()
       }
-    } catch (error) {
-      setError('An error occurred. Please try again.')
+    } catch {
+      setAuthError('An error occurred. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -79,8 +79,8 @@ export default function SignInPage() {
               />
             </div>
 
-            {error && (
-              <div className="text-red-500 text-sm text-center">{error}</div>
+            {authError && (
+              <div className="text-red-500 text-sm text-center">{authError}</div>
             )}
 
             <Button
