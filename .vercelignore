@@ -1,0 +1,26 @@
+# Local development files
+.env.local
+.env.development
+.env.test
+
+# Database files
+prisma/dev.db*
+prisma/test.db*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Local Next.js files
+.next/
+out/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
