@@ -1,6 +1,5 @@
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from './auth'
-import { UserRole } from '@prisma/client'
+import { authOptions, USER_ROLES } from './auth'
 
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions)
@@ -17,7 +16,7 @@ export async function requireAuth() {
 
 export async function requireAdmin() {
   const user = await requireAuth()
-  if (user.role !== UserRole.ADMIN) {
+  if (user.role !== USER_ROLES.ADMIN) {
     throw new Error('Admin access required')
   }
   return user
@@ -25,7 +24,7 @@ export async function requireAdmin() {
 
 export async function requireBlogEditor() {
   const user = await requireAuth()
-  if (user.role !== UserRole.BLOG_EDITOR && user.role !== UserRole.ADMIN) {
+  if (user.role !== USER_ROLES.BLOG_EDITOR && user.role !== USER_ROLES.ADMIN) {
     throw new Error('Blog editor access required')
   }
   return user

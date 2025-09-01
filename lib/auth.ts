@@ -1,8 +1,16 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { UserRole } from '@prisma/client'
 import { db } from './db'
 import bcrypt from 'bcryptjs'
+
+// User roles as string constants
+export const USER_ROLES = {
+  USER: 'USER',
+  BLOG_EDITOR: 'BLOG_EDITOR', 
+  ADMIN: 'ADMIN',
+} as const
+
+export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES]
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -51,7 +59,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.role = UserRole.USER // Default role for now
+        token.role = USER_ROLES.USER // Default role for now
       }
       return token
     },
@@ -70,10 +78,10 @@ export const authOptions: NextAuthOptions = {
 }
 
 // Utility functions for role checking
-export const isAdmin = (role: UserRole) => role === UserRole.ADMIN
+export const isAdmin = (role: UserRole) => role === USER_ROLES.ADMIN
 export const isBlogEditor = (role: UserRole) =>
-  role === UserRole.BLOG_EDITOR || role === UserRole.ADMIN
+  role === USER_ROLES.BLOG_EDITOR || role === USER_ROLES.ADMIN
 export const isUser = (role: UserRole) =>
-  role === UserRole.USER ||
-  role === UserRole.BLOG_EDITOR ||
-  role === UserRole.ADMIN
+  role === USER_ROLES.USER ||
+  role === USER_ROLES.BLOG_EDITOR ||
+  role === USER_ROLES.ADMIN
