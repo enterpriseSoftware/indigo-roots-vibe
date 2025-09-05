@@ -78,7 +78,7 @@ export const emailTemplates = {
     `
   }),
 
-  welcome: (userName: string, userEmail: string) => ({
+  welcome: (userName: string, _userEmail: string) => ({
     subject: 'Welcome to Indigo Roots Vibe! 🎵',
     html: `
       <!DOCTYPE html>
@@ -345,7 +345,7 @@ export class EmailService {
       }
 
       // Send a test email to verify configuration
-      const result = await resend.emails.send({
+      await resend.emails.send({
         from: FROM_EMAIL,
         to: ['test@example.com'], // This will fail but we can check the API key
         subject: 'Test Email',
