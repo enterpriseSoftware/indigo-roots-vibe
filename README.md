@@ -49,47 +49,51 @@ A modern Next.js application with authentication, role-based access control, and
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Git
 
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/enterpriseSoftware/indigo-roots-vibe.git
    cd indigo-roots-vibe
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Edit `.env.local` with your values:
+
    ```env
    # Database
    DATABASE_URL="file:./prisma/dev.db"
-   
+
    # NextAuth.js
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-secret-key-here"
-   
+
    # Email Service (Resend)
    RESEND_API_KEY="re_your_resend_api_key"
    FROM_EMAIL="noreply@yourdomain.com"
-   
+
    # OAuth Providers (optional)
    GOOGLE_CLIENT_ID="your_google_client_id"
    GOOGLE_CLIENT_SECRET="your_google_client_secret"
    FACEBOOK_CLIENT_ID="your_facebook_client_id"
    FACEBOOK_CLIENT_SECRET="your_facebook_client_secret"
-   
+
    # Stripe (optional for development)
    STRIPE_SECRET_KEY="sk_test_..."
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
@@ -97,12 +101,14 @@ A modern Next.js application with authentication, role-based access control, and
    ```
 
 4. **Set up the database**
+
    ```bash
    npx prisma generate
    npx prisma db push
    ```
 
 5. **Start the development server**
+
    ```bash
    npm run dev
    ```
@@ -112,6 +118,7 @@ A modern Next.js application with authentication, role-based access control, and
 ## 🧪 Testing
 
 ### Run Tests
+
 ```bash
 # Run all tests
 npm test
@@ -124,6 +131,7 @@ npm run test:coverage
 ```
 
 ### Test Pages Locally
+
 - **Home**: http://localhost:3000
 - **Sign In**: http://localhost:3000/signin
 - **Sign Up**: http://localhost:3000/signup
@@ -136,6 +144,7 @@ npm run test:coverage
 ## 🎨 Development
 
 ### Code Quality
+
 ```bash
 # Linting
 npm run lint
@@ -147,6 +156,7 @@ npm run format:check
 ```
 
 ### Database Management
+
 ```bash
 # Generate Prisma client
 npx prisma generate
@@ -159,6 +169,7 @@ npx prisma studio
 ```
 
 ### Build & Production
+
 ```bash
 # Build for production
 npm run build
@@ -170,6 +181,7 @@ npm start
 ## 🔐 Authentication & Roles
 
 ### Features
+
 - **User Registration** with email verification
 - **Password Reset** via email
 - **OAuth Integration** (Google, Facebook)
@@ -178,22 +190,26 @@ npm start
 - **Email Service** integration (Resend)
 
 ### User Roles
+
 - **USER**: Default role, basic access
 - **BLOG_EDITOR**: Can access editor pages
 - **ADMIN**: Full administrative access
 
 ### Authentication Methods
+
 1. **Email/Password**: Traditional sign-in
 2. **Google OAuth**: Sign in with Google account
 3. **Facebook OAuth**: Sign in with Facebook account
 
 ### Protected Routes
+
 - `/admin` - Admin only
 - `/editor` - Blog editors and admins
 - `/profile` - All authenticated users
 - All other routes are public
 
 ### Authentication Pages
+
 - `/signin` - Sign in page
 - `/signup` - User registration
 - `/forgot-password` - Password reset request
@@ -207,7 +223,7 @@ Stripe webhook endpoint is configured at `/api/stripe/webhook` and handles:
 
 - `payment_intent.succeeded`
 - `customer.subscription.created`
-- `customer.subscription.updated` 
+- `customer.subscription.updated`
 - `customer.subscription.deleted`
 - `invoice.payment_succeeded`
 - `invoice.payment_failed`
@@ -222,6 +238,7 @@ Stripe webhook endpoint is configured at `/api/stripe/webhook` and handles:
 
 2. **Set Environment Variables**
    In Vercel dashboard → Settings → Environment Variables:
+
    ```env
    NEXTAUTH_URL=https://your-app.vercel.app
    NEXTAUTH_SECRET=your-production-secret
@@ -238,41 +255,45 @@ Stripe webhook endpoint is configured at `/api/stripe/webhook` and handles:
 ### Preview Environments
 
 Vercel automatically creates preview deployments:
+
 - **Production**: `https://indigo-roots-vibe.vercel.app` (main branch)
 - **Preview**: `https://indigo-roots-vibe-git-[branch].vercel.app` (feature branches)
 
 ## 📝 Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DATABASE_URL` | Database connection string | ✅ |
-| `NEXTAUTH_URL` | Application URL | ✅ |
-| `NEXTAUTH_SECRET` | NextAuth.js secret key | ✅ |
-| `RESEND_API_KEY` | Resend email service API key | ✅ |
-| `FROM_EMAIL` | Sender email address | ✅ |
-| `GOOGLE_CLIENT_ID` | Google OAuth client ID | ⚠️ |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | ⚠️ |
-| `FACEBOOK_CLIENT_ID` | Facebook OAuth client ID | ⚠️ |
-| `FACEBOOK_CLIENT_SECRET` | Facebook OAuth client secret | ⚠️ |
-| `STRIPE_SECRET_KEY` | Stripe secret key | ⚠️ |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | ⚠️ |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | ⚠️ |
+| Variable                             | Description                  | Required |
+| ------------------------------------ | ---------------------------- | -------- |
+| `DATABASE_URL`                       | Database connection string   | ✅       |
+| `NEXTAUTH_URL`                       | Application URL              | ✅       |
+| `NEXTAUTH_SECRET`                    | NextAuth.js secret key       | ✅       |
+| `RESEND_API_KEY`                     | Resend email service API key | ✅       |
+| `FROM_EMAIL`                         | Sender email address         | ✅       |
+| `GOOGLE_CLIENT_ID`                   | Google OAuth client ID       | ⚠️       |
+| `GOOGLE_CLIENT_SECRET`               | Google OAuth client secret   | ⚠️       |
+| `FACEBOOK_CLIENT_ID`                 | Facebook OAuth client ID     | ⚠️       |
+| `FACEBOOK_CLIENT_SECRET`             | Facebook OAuth client secret | ⚠️       |
+| `STRIPE_SECRET_KEY`                  | Stripe secret key            | ⚠️       |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key       | ⚠️       |
+| `STRIPE_WEBHOOK_SECRET`              | Stripe webhook secret        | ⚠️       |
 
 ⚠️ = Optional (required for specific features)
 
 ## 📚 Documentation
 
 ### API Documentation
+
 - **[API Reference](docs/API.md)** - Complete API endpoint documentation
 - **[User Guide](docs/USER_GUIDE.md)** - User authentication guide
 
 ### Authentication Flow
+
 1. **Registration**: User signs up → Email verification required
 2. **Sign In**: Email/password or OAuth → Session created
 3. **Password Reset**: Request reset → Email sent → Reset password
 4. **Session Management**: 30-day "Remember Me" or 24-hour sessions
 
 ### Testing
+
 - **Unit Tests**: Core authentication utilities
 - **Integration Tests**: API endpoint validation
 - **Smoke Tests**: Basic functionality verification
