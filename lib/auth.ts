@@ -116,7 +116,7 @@ export const authOptions: NextAuthOptions = {
               data: {
                 email: user.email!,
                 name: user.name || profile?.name || '',
-                image: user.image || profile?.picture || profile?.image_url || '',
+                image: user.image || (profile as any)?.picture || (profile as any)?.image_url || '',
                 emailVerified: new Date(),
                 role: 'USER', // Default role for OAuth users
               },
@@ -127,7 +127,7 @@ export const authOptions: NextAuthOptions = {
               where: { id: dbUser.id },
               data: {
                 name: user.name || profile?.name || dbUser.name,
-                image: user.image || profile?.picture || profile?.image_url || dbUser.image,
+                image: user.image || (profile as any)?.picture || (profile as any)?.image_url || dbUser.image,
                 emailVerified: new Date(),
               },
             })
@@ -137,9 +137,9 @@ export const authOptions: NextAuthOptions = {
             ...token,
             sub: dbUser.id,
             role: dbUser.role as UserRole,
-            email: dbUser.email,
-            name: dbUser.name,
-            picture: dbUser.image,
+            email: dbUser.email || undefined,
+            name: dbUser.name || null,
+            picture: dbUser.image || null,
           }
         }
         
@@ -149,13 +149,21 @@ export const authOptions: NextAuthOptions = {
             ...token,
             sub: user.id,
             role: user.role as UserRole,
-            email: user.email,
-            name: user.name,
+            email: user.email || undefined,
+            name: user.name || null,
+            picture: null,
           }
         }
       }
       
-      return token
+      // Ensure token always has required properties
+      return {
+        ...token,
+        role: token.role || 'USER',
+        email: token.email || undefined,
+        name: token.name || null,
+        picture: token.picture || null,
+      }
     },
     
     async session({ session, token }) {

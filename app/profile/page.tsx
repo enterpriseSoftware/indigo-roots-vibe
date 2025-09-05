@@ -3,6 +3,7 @@
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
+import Image from 'next/image'
 import { SessionManager } from '@/components/session-manager'
 import { Card, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -98,9 +99,11 @@ export default function ProfilePage() {
                       Profile Picture
                     </label>
                     <div className="flex items-center space-x-3">
-                      <img
+                      <Image
                         src={session.user.image}
                         alt="Profile"
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-full"
                       />
                       <span className="text-sm text-brand-gray">Profile image from OAuth provider</span>

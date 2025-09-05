@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentSession, getSessionExpiryInfo, formatTimeUntilExpiry } from '@/lib/session'
 
 // GET endpoint to get current session info
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getCurrentSession()
     
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 }
 
 // POST endpoint to refresh session (if needed)
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     const session = await getCurrentSession()
     

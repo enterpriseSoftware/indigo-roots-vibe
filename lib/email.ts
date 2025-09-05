@@ -256,7 +256,7 @@ export class EmailService {
         text: template.text,
       });
 
-      console.log('Password reset email sent:', result);
+      console.warn('Password reset email sent:', result);
       return { success: true };
     } catch (error) {
       console.error('Failed to send password reset email:', error);
@@ -289,7 +289,7 @@ export class EmailService {
         text: template.text,
       });
 
-      console.log('Welcome email sent:', result);
+      console.warn('Welcome email sent:', result);
       return { success: true };
     } catch (error) {
       console.error('Failed to send welcome email:', error);
@@ -324,7 +324,7 @@ export class EmailService {
         text: template.text,
       });
 
-      console.log('Email verification sent:', result);
+      console.warn('Email verification sent:', result);
       return { success: true };
     } catch (error) {
       console.error('Failed to send email verification:', error);

@@ -28,7 +28,7 @@ interface SessionInfo {
 }
 
 export function SessionManager() {
-  const { data: session, status } = useSession()
+  const { status } = useSession()
   const [sessionInfo, setSessionInfo] = useState<SessionInfo | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -46,7 +46,7 @@ export function SessionManager() {
       } else {
         setError(data.error || 'Failed to fetch session info')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to fetch session info')
     } finally {
       setLoading(false)
@@ -68,7 +68,7 @@ export function SessionManager() {
       } else {
         setError(data.error || 'Failed to refresh session')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to refresh session')
     } finally {
       setLoading(false)
@@ -79,7 +79,7 @@ export function SessionManager() {
   const handleSignOut = async () => {
     try {
       await signOut({ callbackUrl: '/' })
-    } catch (err) {
+    } catch {
       setError('Failed to sign out')
     }
   }
