@@ -80,6 +80,16 @@ A modern Next.js application with authentication, role-based access control, and
    NEXTAUTH_URL="http://localhost:3000"
    NEXTAUTH_SECRET="your-secret-key-here"
    
+   # Email Service (Resend)
+   RESEND_API_KEY="re_your_resend_api_key"
+   FROM_EMAIL="noreply@yourdomain.com"
+   
+   # OAuth Providers (optional)
+   GOOGLE_CLIENT_ID="your_google_client_id"
+   GOOGLE_CLIENT_SECRET="your_google_client_secret"
+   FACEBOOK_CLIENT_ID="your_facebook_client_id"
+   FACEBOOK_CLIENT_SECRET="your_facebook_client_secret"
+   
    # Stripe (optional for development)
    STRIPE_SECRET_KEY="sk_test_..."
    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
@@ -115,11 +125,13 @@ npm run test:coverage
 
 ### Test Pages Locally
 - **Home**: http://localhost:3000
-- **Test Components**: http://localhost:3000/test
-- **Auth Test**: http://localhost:3000/auth-test
 - **Sign In**: http://localhost:3000/signin
+- **Sign Up**: http://localhost:3000/signup
+- **Profile** (protected): http://localhost:3000/profile
 - **Admin** (protected): http://localhost:3000/admin
 - **Editor** (protected): http://localhost:3000/editor
+- **Forgot Password**: http://localhost:3000/forgot-password
+- **Test Components**: http://localhost:3000/test
 
 ## 🎨 Development
 
@@ -157,16 +169,37 @@ npm start
 
 ## 🔐 Authentication & Roles
 
-The application includes three user roles:
+### Features
+- **User Registration** with email verification
+- **Password Reset** via email
+- **OAuth Integration** (Google, Facebook)
+- **Role-Based Access Control** (RBAC)
+- **Session Management** with "Remember Me"
+- **Email Service** integration (Resend)
 
+### User Roles
 - **USER**: Default role, basic access
 - **BLOG_EDITOR**: Can access editor pages
 - **ADMIN**: Full administrative access
 
+### Authentication Methods
+1. **Email/Password**: Traditional sign-in
+2. **Google OAuth**: Sign in with Google account
+3. **Facebook OAuth**: Sign in with Facebook account
+
 ### Protected Routes
 - `/admin` - Admin only
 - `/editor` - Blog editors and admins
+- `/profile` - All authenticated users
 - All other routes are public
+
+### Authentication Pages
+- `/signin` - Sign in page
+- `/signup` - User registration
+- `/forgot-password` - Password reset request
+- `/reset-password` - Password reset form
+- `/verify-email` - Email verification
+- `/profile` - User profile management
 
 ## 💳 Stripe Integration
 
@@ -215,11 +248,34 @@ Vercel automatically creates preview deployments:
 | `DATABASE_URL` | Database connection string | ✅ |
 | `NEXTAUTH_URL` | Application URL | ✅ |
 | `NEXTAUTH_SECRET` | NextAuth.js secret key | ✅ |
+| `RESEND_API_KEY` | Resend email service API key | ✅ |
+| `FROM_EMAIL` | Sender email address | ✅ |
+| `GOOGLE_CLIENT_ID` | Google OAuth client ID | ⚠️ |
+| `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | ⚠️ |
+| `FACEBOOK_CLIENT_ID` | Facebook OAuth client ID | ⚠️ |
+| `FACEBOOK_CLIENT_SECRET` | Facebook OAuth client secret | ⚠️ |
 | `STRIPE_SECRET_KEY` | Stripe secret key | ⚠️ |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable key | ⚠️ |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook secret | ⚠️ |
 
-⚠️ = Required for Stripe functionality
+⚠️ = Optional (required for specific features)
+
+## 📚 Documentation
+
+### API Documentation
+- **[API Reference](docs/API.md)** - Complete API endpoint documentation
+- **[User Guide](docs/USER_GUIDE.md)** - User authentication guide
+
+### Authentication Flow
+1. **Registration**: User signs up → Email verification required
+2. **Sign In**: Email/password or OAuth → Session created
+3. **Password Reset**: Request reset → Email sent → Reset password
+4. **Session Management**: 30-day "Remember Me" or 24-hour sessions
+
+### Testing
+- **Unit Tests**: Core authentication utilities
+- **Integration Tests**: API endpoint validation
+- **Smoke Tests**: Basic functionality verification
 
 ## 🤝 Contributing
 
