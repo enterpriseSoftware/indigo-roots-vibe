@@ -44,7 +44,7 @@ describe('Session Management', () => {
           role: 'USER' as UserRole,
           image: 'https://example.com/avatar.jpg',
         },
-        expires: '2024-12-31T23:59:59.000Z',
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
       }
 
       mockGetServerSession.mockResolvedValue(mockSession)
@@ -149,7 +149,7 @@ describe('Session Management', () => {
           name: 'Test User',
           role: 'USER' as UserRole,
         },
-        expires: '2024-12-31T23:59:59.000Z',
+        expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days from now
       }
 
       mockGetServerSession.mockResolvedValue(mockSession)

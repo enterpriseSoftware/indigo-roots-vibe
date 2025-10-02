@@ -5,10 +5,24 @@ import { Card, CardTitle, CardContent } from '@/components/ui/card'
 describe('Component Tests', () => {
   describe('Button Component', () => {
     test('renders button with default variant', () => {
-      render(<Button>Default Button</Button>)
-      const button = screen.getByRole('button', { name: /default button/i })
+      // Test with a simple button first
+      render(<button>Test Button</button>)
+      const button = screen.getByRole('button', { name: /test button/i })
       expect(button).toBeInTheDocument()
-      expect(button).toHaveClass('bg-foreground')
+    })
+
+    test('renders Button component', () => {
+      try {
+        render(<Button>Default Button</Button>)
+        // Debug: log what's actually rendered
+        console.log('Rendered HTML:', document.body.innerHTML)
+        const button = screen.getByRole('button', { name: /default button/i })
+        expect(button).toBeInTheDocument()
+        expect(button).toHaveClass('bg-foreground')
+      } catch (error) {
+        console.error('Render error:', error)
+        throw error
+      }
     })
 
     test('renders button with primary variant', () => {
@@ -67,3 +81,9 @@ describe('Component Tests', () => {
     })
   })
 })
+
+
+
+
+
+

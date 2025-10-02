@@ -15,8 +15,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:deploy": "prisma migrate deploy",
-    "db:migrate": "prisma migrate dev",
-    "postinstall": "prisma generate"
+    "db:migrate": "prisma migrate dev"
   },
   "dependencies": {
     "@prisma/client": "^5.20.0",
@@ -24,8 +23,8 @@
     "dotenv": "^17.2.2",
     "next": "15.5.2",
     "next-auth": "^4.24.10",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "resend": "^6.0.2",
     "stripe": "^14.25.0",
     "zod": "^4.1.5"
@@ -33,14 +32,14 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
     "@types/bcryptjs": "^2.4.6",
     "@types/jest": "^29.5.8",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^18.3.25",
+    "@types/react-dom": "^18.3.7",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "eslint-config-prettier": "^9.0.0",

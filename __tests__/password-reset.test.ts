@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals'
-import { generateResetToken, validateResetToken, hashPassword } from '../lib/password-reset'
+import { generateResetToken, validateResetToken, createPasswordResetRequest } from '../lib/password-reset'
 
 // Mock crypto
 jest.mock('crypto', () => ({
@@ -12,23 +12,42 @@ jest.mock('bcrypt', () => ({
   compare: jest.fn(),
 }))
 
+// Mock Prisma client
+jest.mock('@prisma/client', () => ({
+  PrismaClient: jest.fn().mockImplementation(() => ({
+    passwordReset: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    user: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
+    },
+    $disconnect: jest.fn(),
+  })),
+}))
+
 // Mock database
 jest.mock('../lib/db', () => ({
-  passwordReset: {
-    create: jest.fn(),
-    findUnique: jest.fn(),
-    update: jest.fn(),
-    deleteMany: jest.fn(),
-  },
-  user: {
-    findUnique: jest.fn(),
-    update: jest.fn(),
+  db: {
+    passwordReset: {
+      create: jest.fn(),
+      findUnique: jest.fn(),
+      update: jest.fn(),
+      deleteMany: jest.fn(),
+    },
+    user: {
+      findUnique: jest.fn(),
+      update: jest.fn(),
+    },
   },
 }))
 
 const mockCrypto = require('crypto')
 const mockBcrypt = require('bcrypt')
-const mockDb = require('../lib/db')
+const mockDb = require('../lib/db').db
 
 describe('Password Reset', () => {
   beforeEach(() => {
@@ -40,43 +59,14 @@ describe('Password Reset', () => {
   })
 
   describe('generateResetToken', () => {
-    it('should generate a reset token and save to database', async () => {
+    it('should generate a reset token', () => {
       const mockToken = Buffer.from('test-token')
-      const mockEmail = 'test@example.com'
-      const mockExpires = new Date(Date.now() + 60 * 60 * 1000) // 1 hour
-
       mockCrypto.randomBytes.mockReturnValue(mockToken)
-      mockDb.passwordReset.create.mockResolvedValue({
-        id: 'reset123',
-        email: mockEmail,
-        token: mockToken.toString('hex'),
-        expires: mockExpires,
-      })
 
-      const result = await generateResetToken(mockEmail)
+      const result = generateResetToken()
 
       expect(mockCrypto.randomBytes).toHaveBeenCalledWith(32)
-      expect(mockDb.passwordReset.create).toHaveBeenCalledWith({
-        data: {
-          email: mockEmail,
-          token: mockToken.toString('hex'),
-          expires: expect.any(Date),
-        },
-      })
-      expect(result).toEqual({
-        token: mockToken.toString('hex'),
-        expires: expect.any(Date),
-      })
-    })
-
-    it('should handle database errors', async () => {
-      const mockEmail = 'test@example.com'
-      const mockError = new Error('Database error')
-
-      mockCrypto.randomBytes.mockReturnValue(Buffer.from('test-token'))
-      mockDb.passwordReset.create.mockRejectedValue(mockError)
-
-      await expect(generateResetToken(mockEmail)).rejects.toThrow('Database error')
+      expect(result).toBe(mockToken.toString('hex'))
     })
   })
 
@@ -94,16 +84,27 @@ describe('Password Reset', () => {
         used: false,
       })
 
+      mockDb.user.findUnique.mockResolvedValue({
+        id: 'reset123',
+        email: mockEmail,
+        name: 'Test User',
+      })
+
       const result = await validateResetToken(mockToken)
 
       expect(mockDb.passwordReset.findUnique).toHaveBeenCalledWith({
         where: { token: mockToken },
+      })
+      expect(mockDb.user.findUnique).toHaveBeenCalledWith({
+        where: { email: mockEmail },
+        select: { id: true, email: true, name: true },
       })
       expect(result).toEqual({
         valid: true,
         user: {
           id: 'reset123',
           email: mockEmail,
+          name: 'Test User',
         },
       })
     })
@@ -164,26 +165,4 @@ describe('Password Reset', () => {
     })
   })
 
-  describe('hashPassword', () => {
-    it('should hash a password', async () => {
-      const mockPassword = 'testpassword123'
-      const mockHashedPassword = 'hashed-password'
-
-      mockBcrypt.hash.mockResolvedValue(mockHashedPassword)
-
-      const result = await hashPassword(mockPassword)
-
-      expect(mockBcrypt.hash).toHaveBeenCalledWith(mockPassword, 12)
-      expect(result).toBe(mockHashedPassword)
-    })
-
-    it('should handle hashing errors', async () => {
-      const mockPassword = 'testpassword123'
-      const mockError = new Error('Hashing error')
-
-      mockBcrypt.hash.mockRejectedValue(mockError)
-
-      await expect(hashPassword(mockPassword)).rejects.toThrow('Hashing error')
-    })
-  })
 })

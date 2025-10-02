@@ -12,9 +12,11 @@ const mockRequest = (body: any = {}, headers: any = {}) => ({
 
 const mockResponse = () => {
   const res: any = {
-    json: jest.fn().mockReturnValue(res),
-    status: jest.fn().mockReturnValue(res),
+    json: jest.fn(),
+    status: jest.fn(),
   }
+  res.json.mockReturnValue(res)
+  res.status.mockReturnValue(res)
   return res
 }
 

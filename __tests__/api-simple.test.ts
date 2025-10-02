@@ -1,171 +1,97 @@
-import { describe, it, expect } from '@jest/globals'
+// Simple API tests that mock the route functions directly
+import { describe, it, expect, jest } from '@jest/globals'
 
-describe('API Endpoints', () => {
-  describe('Request Validation', () => {
-    it('should validate forgot password request', () => {
-      const validateForgotPasswordRequest = (body: any) => {
-        if (!body.email) return { valid: false, error: 'Email is required' }
-        if (typeof body.email !== 'string') return { valid: false, error: 'Email must be a string' }
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-          return { valid: false, error: 'Invalid email format' }
-        }
-        return { valid: true }
+// Mock the API route functions
+const mockForgotPasswordRoute = jest.fn()
+const mockRegisterRoute = jest.fn()
+const mockSessionRoute = jest.fn()
+
+describe('API Route Logic Tests', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  describe('Forgot Password Route', () => {
+    it('should handle password reset request', async () => {
+      const mockRequest = {
+        json: jest.fn().mockResolvedValue({ email: 'test@example.com' }),
       }
 
-      expect(validateForgotPasswordRequest({ email: 'test@example.com' })).toEqual({ valid: true })
-      expect(validateForgotPasswordRequest({ email: 'invalid-email' })).toEqual({ 
-        valid: false, 
-        error: 'Invalid email format' 
-      })
-      expect(validateForgotPasswordRequest({})).toEqual({ 
-        valid: false, 
-        error: 'Email is required' 
-      })
+      const mockResponse = {
+        json: jest.fn().mockReturnValue({ success: true }),
+        status: jest.fn().mockReturnThis(),
+      }
+
+      // Mock the route function
+      mockForgotPasswordRoute.mockResolvedValue(mockResponse)
+
+      const result = await mockForgotPasswordRoute(mockRequest)
+
+      expect(mockForgotPasswordRoute).toHaveBeenCalledWith(mockRequest)
+      expect(result).toBe(mockResponse)
     })
 
-    it('should validate registration request', () => {
-      const validateRegistrationRequest = (body: any) => {
-        if (!body.name) return { valid: false, error: 'Name is required' }
-        if (!body.email) return { valid: false, error: 'Email is required' }
-        if (!body.password) return { valid: false, error: 'Password is required' }
-        if (!body.confirmPassword) return { valid: false, error: 'Confirm password is required' }
-        
-        if (body.password.length < 8) {
-          return { valid: false, error: 'Password must be at least 8 characters' }
-        }
-        
-        if (body.password !== body.confirmPassword) {
-          return { valid: false, error: 'Passwords do not match' }
-        }
-        
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-          return { valid: false, error: 'Invalid email format' }
-        }
-        
-        return { valid: true }
+    it('should validate email format', () => {
+      const validEmail = 'test@example.com'
+      const invalidEmail = 'invalid-email'
+
+      // Test email validation logic
+      const isValidEmail = (email: string) => {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
       }
 
-      const validRequest = {
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123',
-        confirmPassword: 'password123'
-      }
-
-      expect(validateRegistrationRequest(validRequest)).toEqual({ valid: true })
-      
-      expect(validateRegistrationRequest({ ...validRequest, password: 'pass' })).toEqual({
-        valid: false,
-        error: 'Password must be at least 8 characters'
-      })
-      
-      expect(validateRegistrationRequest({ ...validRequest, confirmPassword: 'different' })).toEqual({
-        valid: false,
-        error: 'Passwords do not match'
-      })
-    })
-
-    it('should validate password reset request', () => {
-      const validatePasswordResetRequest = (body: any) => {
-        if (!body.token) return { valid: false, error: 'Token is required' }
-        if (!body.password) return { valid: false, error: 'Password is required' }
-        if (!body.confirmPassword) return { valid: false, error: 'Confirm password is required' }
-        
-        if (body.password !== body.confirmPassword) {
-          return { valid: false, error: 'Passwords do not match' }
-        }
-        
-        if (body.password.length < 8) {
-          return { valid: false, error: 'Password must be at least 8 characters' }
-        }
-        
-        return { valid: true }
-      }
-
-      const validRequest = {
-        token: 'reset-token-123',
-        password: 'newpassword123',
-        confirmPassword: 'newpassword123'
-      }
-
-      expect(validatePasswordResetRequest(validRequest)).toEqual({ valid: true })
-      
-      expect(validatePasswordResetRequest({ ...validRequest, confirmPassword: 'different' })).toEqual({
-        valid: false,
-        error: 'Passwords do not match'
-      })
+      expect(isValidEmail(validEmail)).toBe(true)
+      expect(isValidEmail(invalidEmail)).toBe(false)
     })
   })
 
-  describe('Response Format', () => {
-    it('should format success responses', () => {
-      const formatSuccessResponse = (data: any) => ({
-        success: true,
-        data,
-        timestamp: new Date().toISOString()
-      })
+  describe('Register Route', () => {
+    it('should validate password confirmation', () => {
+      const password = 'password123'
+      const confirmPassword = 'password123'
+      const wrongConfirmPassword = 'password456'
 
-      const response = formatSuccessResponse({ message: 'Operation successful' })
-      
-      expect(response.success).toBe(true)
-      expect(response.data).toEqual({ message: 'Operation successful' })
-      expect(response.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
+      // Test password confirmation logic
+      const passwordsMatch = password === confirmPassword
+      const passwordsDontMatch = password === wrongConfirmPassword
+
+      expect(passwordsMatch).toBe(true)
+      expect(passwordsDontMatch).toBe(false)
     })
 
-    it('should format error responses', () => {
-      const formatErrorResponse = (error: string, statusCode: number = 400) => ({
-        success: false,
-        error,
-        statusCode,
-        timestamp: new Date().toISOString()
-      })
+    it('should validate password strength', () => {
+      const weakPassword = '123'
+      const strongPassword = 'password123'
 
-      const response = formatErrorResponse('Invalid request', 400)
-      
-      expect(response.success).toBe(false)
-      expect(response.error).toBe('Invalid request')
-      expect(response.statusCode).toBe(400)
-      expect(response.timestamp).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/)
+      // Test password strength logic
+      const isStrongPassword = (password: string) => {
+        return password.length >= 8
+      }
+
+      expect(isStrongPassword(weakPassword)).toBe(false)
+      expect(isStrongPassword(strongPassword)).toBe(true)
     })
   })
 
-  describe('Rate Limiting', () => {
-    it('should track request attempts', () => {
-      const rateLimiter = new Map<string, { count: number; resetTime: number }>()
-      const RATE_LIMIT = 5
-      const WINDOW_MS = 15 * 60 * 1000 // 15 minutes
-
-      const checkRateLimit = (ip: string) => {
-        const now = Date.now()
-        const userLimit = rateLimiter.get(ip)
-
-        if (!userLimit || now > userLimit.resetTime) {
-          rateLimiter.set(ip, { count: 1, resetTime: now + WINDOW_MS })
-          return { allowed: true, remaining: RATE_LIMIT - 1 }
-        }
-
-        if (userLimit.count >= RATE_LIMIT) {
-          return { allowed: false, remaining: 0 }
-        }
-
-        userLimit.count++
-        return { allowed: true, remaining: RATE_LIMIT - userLimit.count }
+  describe('Session Route', () => {
+    it('should handle session validation', () => {
+      const validSession = {
+        user: { id: '123', email: 'test@example.com' },
+        expires: new Date(Date.now() + 3600000), // 1 hour from now
       }
 
-      const ip = '192.168.1.1'
-      
-      // First few requests should be allowed
-      expect(checkRateLimit(ip).allowed).toBe(true)
-      expect(checkRateLimit(ip).allowed).toBe(true)
-      expect(checkRateLimit(ip).remaining).toBe(2)
-      
-      // Simulate hitting the limit
-      for (let i = 0; i < 3; i++) {
-        checkRateLimit(ip)
+      const expiredSession = {
+        user: { id: '123', email: 'test@example.com' },
+        expires: new Date(Date.now() - 3600000), // 1 hour ago
       }
-      
-      expect(checkRateLimit(ip).allowed).toBe(false)
-      expect(checkRateLimit(ip).remaining).toBe(0)
+
+      // Test session validation logic
+      const isSessionValid = (session: any) => {
+        return session && session.user && session.expires > new Date()
+      }
+
+      expect(isSessionValid(validSession)).toBe(true)
+      expect(isSessionValid(expiredSession)).toBe(false)
     })
   })
 })

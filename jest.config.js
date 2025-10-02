@@ -8,11 +8,16 @@ const createJestConfig = nextJest({
 // Add any custom config to be passed to Jest
 const customJestConfig = {
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'node',
   testPathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/node_modules/'],
   moduleNameMapper: {
     // Handle module aliases
     '^@/(.*)$': '<rootDir>/$1',
+    // Mock Next.js server modules
+    '^next/server$': '<rootDir>/__mocks__/next/server.js',
+    '^next/dist/server/web/exports/next-response$':
+      '<rootDir>/__mocks__/next/server.js',
+    '^next/dist/server/web/exports$': '<rootDir>/__mocks__/next/server.js',
   },
   transformIgnorePatterns: ['node_modules/(?!(jose|openid-client)/)'],
   collectCoverageFrom: [
